@@ -1,0 +1,41 @@
+{
+  "name": "note-nuxt-test",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint:js": "eslint --ext \".js,.ts,.vue\" --ignore-path .gitignore .",
+    "lint": "yarn lint:js",
+    "lintfix": "yarn lint:js --fix"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.16.7",
+    "@jup-ag/core": "^1.0.0-beta.5",
+    "ant-design-vue": "^1.7.8",
+    "babel-plugin-dynamic-import-node": "^2.3.3",
+    "core-js": "^3.15.1",
+    "nuxt": "^2.15.7",
+    "sass": "^1.49.0",
+    "vue": "^2.6.14",
+    "vue-server-renderer": "^2.6.14",
+    "vue-template-compiler": "^2.6.14",
+    "webpack": "^4.46.0"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.16.3",
+    "@nuxt/types": "^2.15.8",
+    "@nuxt/typescript-build": "^2.1.0",
+    "@nuxtjs/eslint-config-typescript": "^8.0.0",
+    "@nuxtjs/eslint-module": "^3.0.2",
+    "eslint": "^8.4.1",
+    "eslint-plugin-nuxt": "^3.1.0",
+    "eslint-plugin-vue": "^8.2.0"
+  },
+  "resolutions": {
+    "@solana/buffer-layout": "3.0.0",
+    "acorn": "8.7.0"
+  }
+}
