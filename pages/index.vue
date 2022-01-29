@@ -25,6 +25,7 @@
         :tokenInfo="tokenInfo"
         :amount="amount"
         :slippage="slippage"
+        :routes="routes"
         @showTokenListWithSide="toggleTokeListModal"
         @setInputAmount="setInputAmount"
         @switchInputAndOutputToken="switchInputAndOutputToken"
@@ -80,6 +81,7 @@ export default Vue.extend({
         input: null as number | null,
         output: null as number | null,
         outAmountWithSlippage: null as number | null,
+        txFee: null as number | null,
       },
       // inputAmount: null as number | null,
       routes: null,
@@ -179,7 +181,8 @@ export default Vue.extend({
     ) {
       //  Load Jupiter
       this.jupiter = await Jupiter.load({
-        connection,
+        connection: new Connection("https://solana-api.projectserum.com"),
+        // connection,
         cluster,
         user, // or public key
       });
@@ -206,6 +209,7 @@ export default Vue.extend({
       }, new Map());
     },
     async getRoutes() {
+      console.log(1);
       this.routes = null;
       if (
         !this.tokenInfo.input.address ||
@@ -235,47 +239,40 @@ export default Vue.extend({
         "Slippage: ",
         this.slippage
       );
-      console.log(this.routes, "WHAT R OYU");
-      // try {
-      let routes =
-        this.tokenInfo.input.address && this.tokenInfo.output.address
-          ? await this.jupiter.computeRoutes(
-              new PublicKey(this.tokenInfo.input.address),
-              new PublicKey(this.tokenInfo.output.address),
-              inputAmountInSmallestUnits,
-              this.slippage,
-              true
-            )
-          : null;
-      console.log(routes, "######");
 
-      if (routes) {
-        console.log(routes, "?????");
-        console.log(routes.routesInfos, "===");
+      try {
+        let routes =
+          this.tokenInfo.input.address && this.tokenInfo.output.address
+            ? await this.jupiter.computeRoutes(
+                new PublicKey(this.tokenInfo.input.address),
+                new PublicKey(this.tokenInfo.output.address),
+                inputAmountInSmallestUnits,
+                this.slippage,
+                true
+              )
+            : null;
+        console.log(routes, "######");
+
+        if (routes) {
+          console.log(routes, "?????");
+          console.log(routes.routesInfos, "===");
+        }
+
+        if (routes && routes.routesInfos) {
+          // @ts-ignore
+          this.routes = routes;
+          // @ts-ignore
+          let bestRoute = routes.routesInfos[0];
+
+          this.amount.output =
+            bestRoute.outAmount / 10 ** this.tokenInfo.output.decimals;
+          this.amount.outAmountWithSlippage =
+            bestRoute.outAmountWithSlippage /
+            10 ** this.tokenInfo.output.decimals;
+        }
+      } catch {
+        alert("fetching routes error");
       }
-
-      if (routes && routes.routesInfos) {
-        // this.routes = routes;
-        // console.log(this.routes, "this.routes");
-        // console.log(routes, "routes");
-        // this.routes = JSON.parse(JSON.stringify(routes));
-        // @ts-ignore
-        // this.routes = Object.assign({}, routes);
-        // this.routes = routes.routesInfos[0];
-        this.routes = Object.assign({}, routes.routesInfos[0]);
-        // let bestRoute = routes.routesInfos[0];
-        let bestRoute = Object.assign({}, routes.routesInfos[0]);
-
-        this.amount.output =
-          bestRoute.outAmount / 10 ** this.tokenInfo.output.decimals;
-        this.amount.outAmountWithSlippage =
-          bestRoute.outAmountWithSlippage /
-          10 ** this.tokenInfo.output.decimals;
-      }
-      // } catch {
-      // this.routes = {} as IRoutes;
-      // alert("fetching routes error");
-      // }
 
       this.loading.routes = false;
     },
@@ -360,15 +357,28 @@ export default Vue.extend({
       return list;
     },
     async sendTransaction() {
-      console.log(this.routes, "In tx this. route");
-      // let bestRoute = this.routes!.routesInfos[0];
-      let bestRoute = Object.assign({}, this.routes);
-      console.log(bestRoute, "in tx bestRoute");
-      // @ts-ignore
+      const inputAmountInSmallestUnits = this.tokenInfo.input
+        ? Math.round(
+            (this.amount.input as number) * 10 ** this.tokenInfo.input.decimals
+          )
+        : 0;
+
+      let routes =
+        this.tokenInfo.input.address && this.tokenInfo.output.address
+          ? await this.jupiter.computeRoutes(
+              new PublicKey(this.tokenInfo.input.address),
+              new PublicKey(this.tokenInfo.output.address),
+              inputAmountInSmallestUnits,
+              this.slippage,
+              true
+            )
+          : null;
+      console.log(routes, "######");
       const { transactions } = await this.jupiter.exchange({
         // @ts-ignore
-        route: bestRoute,
+        route: routes?.routesInfos[0],
       });
+      console.log(transactions, "###");
     },
   },
 });

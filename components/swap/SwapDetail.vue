@@ -29,11 +29,11 @@
       </div>
       <div>{{ amount.outAmountWithSlippage }}</div>
     </div>
-    <div class="detail-item" v-if="transactionFeeInfo">
+    <div class="detail-item" v-if="amount.txFee">
       <div class="detail-item-title-icon-block">
         <span class="detail-item-title">Transaction Fee</span>
       </div>
-      <div>{{ transactionFeeInfo.signatureFee / 10 ** 9 }} SOL</div>
+      <div>{{ amount.txFee.signatureFee / 10 ** 9 }} SOL</div>
     </div>
     <!-- <div class="detail-item">
       <div class="detail-item-title-icon-block">
@@ -62,26 +62,25 @@ export default Vue.extend({
     };
   },
   watch: {
-    routes: {
-      handler(data) {
-        if (data) {
-          // let bestRoute = data.routesInfos[0];
-          this.priceImpactPct = parseFloat(data.priceImpactPct.toFixed(4));
-
-          data.getDepositAndFee().then((res: TransactionFeeInfo) => {
-            console.log("/????");
-            this.transactionFeeInfo = res;
-          });
-        }
-        // if (data && data.routesInfos) {
-        //   // let bestRoute = data.routesInfos[0];
-        //   // this.priceImpactPct = bestRoute.priceImpactPct.toFixed(4) * 100;
-        //   // bestRoute.getDepositAndFee().then((res: TransactionFeeInfo) => {
-        //   //   this.transactionFeeInfo = res;
-        //   // });
-        // }
-      },
-    },
+    // routes: {
+    //   handler(data) {
+    //     if (data) {
+    //       // let bestRoute = data.routesInfos[0];
+    //       this.priceImpactPct = parseFloat(data.priceImpactPct.toFixed(4));
+    //       data.getDepositAndFee().then((res: TransactionFeeInfo) => {
+    //         console.log("/????");
+    //         this.transactionFeeInfo = res;
+    //       });
+    //     }
+    //     // if (data && data.routesInfos) {
+    //     //   // let bestRoute = data.routesInfos[0];
+    //     //   // this.priceImpactPct = bestRoute.priceImpactPct.toFixed(4) * 100;
+    //     //   // bestRoute.getDepositAndFee().then((res: TransactionFeeInfo) => {
+    //     //   //   this.transactionFeeInfo = res;
+    //     //   // });
+    //     // }
+    //   },
+    // },
   },
 });
 </script>
