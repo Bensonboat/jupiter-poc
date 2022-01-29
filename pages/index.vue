@@ -209,7 +209,6 @@ export default Vue.extend({
       }, new Map());
     },
     async getRoutes() {
-      console.log(1);
       this.routes = null;
       if (
         !this.tokenInfo.input.address ||
@@ -251,12 +250,7 @@ export default Vue.extend({
                 true
               )
             : null;
-        console.log(routes, "######");
-
-        if (routes) {
-          console.log(routes, "?????");
-          console.log(routes.routesInfos, "===");
-        }
+        console.log(routes, "routes");
 
         if (routes && routes.routesInfos) {
           // @ts-ignore
@@ -270,8 +264,8 @@ export default Vue.extend({
             bestRoute.outAmountWithSlippage /
             10 ** this.tokenInfo.output.decimals;
         }
-      } catch {
-        alert("fetching routes error");
+      } catch (e) {
+        console.error(e);
       }
 
       this.loading.routes = false;
@@ -339,7 +333,6 @@ export default Vue.extend({
         "confirmed"
       );
 
-      console.log(splList, "res");
       let accountInfo = await connection.getAccountInfo(pubkey);
 
       let list = splList.value.map((item: IParsedInfo) => {
